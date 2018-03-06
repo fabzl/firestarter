@@ -1,20 +1,42 @@
 import React from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 
-import { works } from '../data';
 import Box from './Box';
 
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-  flex-wrap: wrap;
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  /* grid-template-columns: 1fr 2fr; */
+  /* grid-template-rows: repeat(2, 25%); */
+  grid-auto-rows: 430px;
+  /* grid-template-rows: repeat(2, 430px); */
+  & div:last-child:nth-child(odd) {
+    grid-column: 1 / 3;
+  }
 `;
 
-const Work = () => (
-  <Row>
-    {works.map((item, key) => <Box key={item.id} image={item.image} link />)}
-  </Row>
+const Work = props => (
+  <Grid>
+    {props.data.map((item, key) => {
+      // if (!item.acf.avatar_picture) return null;
+      return (
+        <Box
+          key={item.id}
+          image={item.acf.avatar_picture.url}
+          title={item.acf.nombre_del_proyecto}
+          client={item.acf.cliente}
+          link={item.slug}
+        />
+      );
+    })}
+  </Grid>
 );
 
-export default Work;
+const mapStateToProps = state => {
+  return {
+    data: state.data.data
+  };
+};
+
+export default connect(mapStateToProps)(Work);

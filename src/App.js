@@ -8,10 +8,12 @@ import Work from './components/Work';
 import Header from './components/Header';
 import ShowWork from './components/ShowWork';
 import Loader from './components/Loader';
+import VideoPlayer from './components/VideoPlayer';
 
-import { fetchData } from './redux/actions';
+import { fetchData, stopVideo } from './redux/actions';
 
 const Overlay = styled.div`
+  width: 100%;
   &::before {
     opacity: ${props => (props.showVideo ? 0.92 : 0)};
     content: '';
@@ -29,12 +31,22 @@ const Overlay = styled.div`
   ${props => props.showVideo && 'position: fixed;'};
 `;
 
+const Main = styled.div`
+  min-height: calc(100vh - 130px);
+  z-index: 100;
+  display: block;
+  width: 100%;
+  ${props => props.showVideo && `top: -${window.scrollY}px;`};
+`;
+
 class App extends Component {
   componentDidMount() {
     this.props.fetchData();
-    // setTimeout(() => {
-    //   this.props.fetchData();
-    // }, 3000);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.showVideo && !this.props.showVideo)
+      window.scrollTo(0, prevProps.scrollY);
   }
 
   render() {
@@ -45,10 +57,17 @@ class App extends Component {
         <Overlay showVideo={this.props.showVideo}>
           <Header />
 
-          <Route exact path="/" component={Home} />
-          <Route exact path="/work" component={Work} />
+          <Main showVideo={this.props.showVideo}>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/work" component={Work} />
 
-          <Route exact path="/work/:link" component={ShowWork} />
+            <Route exact path="/work/:link" component={ShowWork} />
+          </Main>
+
+          <VideoPlayer
+            showVideo={this.props.showVideo}
+            closeVideo={this.props.stopVideo}
+          />
         </Overlay>
       </Router>
     );
@@ -58,8 +77,9 @@ class App extends Component {
 const mapStateToProps = state => {
   return {
     showVideo: state.video.showVideo,
+    scrollY: state.video.scrollY,
     data: state.data
   };
 };
 
-export default connect(mapStateToProps, { fetchData })(App);
+export default connect(mapStateToProps, { fetchData, stopVideo })(App);

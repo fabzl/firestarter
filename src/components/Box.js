@@ -2,24 +2,27 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { playVideo } from '../redux/actions';
-import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 
 const Wrap = styled.div`
   position: relative;
-  /* width: ${props => (props.large ? 200 / 3 : 100 / 3)}%;  */
-  /* flex: ${props => (props.large ? 2 : 1)}; */
   overflow: hidden;
   background: url(${props => props.src}) no-repeat center;
   background-size: cover;
-`;
 
-// const Img = styled.img`
-//   max-width: 100%;
-//   max-height: 100%;
-//   /* width: 100%;
-//   height: auto;
-//   display: block; */
-// `;
+  &:hover {
+    > a > div {
+      opacity: 1;
+      h4 {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      h3 {
+        transform: translateX(0);
+      }
+    }
+  }
+`;
 
 const Content = styled.div`
   position: absolute;
@@ -33,44 +36,8 @@ const Content = styled.div`
   transition: opacity 0.3s;
   text-align: center;
   user-select: none;
-  opacity: ${props => (props.hover ? 1 : 0)};
+  opacity: 0;
   color: #fff;
-
-  &::before,
-  &&::after {
-    content: '';
-    display: block;
-    width: 0;
-    border-top: 1px solid #fff;
-    transition: width 0.3s, left 0.4s, right 0.4s;
-    position: absolute;
-    top: 50%;
-    margin-top: -15px;
-    width: ${props => (!props.hover ? 0 : props.large ? 70 : 40)}px;
-  }
-
-  &::before {
-    left: ${props =>
-      props.hover
-        ? props.large ? '200px' : '60px'
-        : props.large ? '60px' : '50%'};
-  }
-
-  &::after {
-    right: ${props =>
-      props.hover
-        ? props.large ? '200px' : '60px'
-        : props.large ? '60px' : '50%'};
-  }
-`;
-
-const Middle = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: none;
-  margin-top: -3em;
 
   h4 {
     margin: 0 0 10px;
@@ -78,6 +45,8 @@ const Middle = styled.div`
     font-weight: 500;
     text-transform: uppercase;
     font-style: italic;
+    opacity: 0;
+    transform: translateX(-200px);
   }
 
   h3 {
@@ -89,61 +58,54 @@ const Middle = styled.div`
     padding: 0.33em 10px 5px;
     margin: 0;
     line-height: 1em;
+    transform: translateX(200px);
+  }
+
+  h3,
+  h4 {
+    transition: transform 0.8s, opacity 1.2s;
+    transition-timing-function: cubic-bezier(0.1, 0.1, 0.2, 1), ease;
   }
 `;
 
-const H4 = styled.h4`
-  transition: transform 0.8s, opacity 1.2s;
-  transition-timing-function: cubic-bezier(0.1, 0.1, 0.2, 1), ease;
-  opacity: ${props => (props.hover ? 1 : 0)};
-  transform: translateX(${props => (props.hover ? 0 : '-200px')});
+const Middle = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: none;
+  margin-top: -3em;
 `;
 
-const preH3 = H4.withComponent('h3');
-
-const H3 = preH3.extend`
-  transform: translateX(${props => (props.hover ? 0 : '200px')});
+const LinkTo = styled(Link)`
+  color: #fff;
+  text-decoration: none;
+  display: block;
+  height: 100%;
 `;
 
 class Box extends Component {
-  state = {
-    hover: false
-  };
-
-  hoverTrue = () => {
-    if (!this.state.hover) {
-      this.setState({ hover: true });
+  handleLink = e => {
+    if (!this.props.link) {
+      e.preventDefault();
+      this.props.playVideo();
     }
-  };
-
-  hoverFalse = () => {
-    if (this.state.hover) {
-      this.setState({ hover: false });
-    }
-  };
-
-  redirect = () => {
-    this.props.history.push('/');
   };
 
   render() {
     return (
-      <Wrap
-        src={this.props.image}
-        large={this.props.large}
-        onMouseEnter={() => this.hoverTrue()}
-        onMouseLeave={() => this.hoverFalse()}
-        onClick={!this.props.link ? this.props.playVideo : this.redirect}
-      >
-        <Content hover={this.state.hover} large={this.props.large}>
-          <Middle>
-            <H4 hover={this.state.hover}>{this.props.title}</H4>
-            <H3 hover={this.state.hover}>{this.props.client}</H3>
-          </Middle>
-        </Content>
+      <Wrap src={this.props.image}>
+        <LinkTo to={'/work/' + this.props.link} onClick={this.handleLink}>
+          <Content>
+            <Middle>
+              <h4>{this.props.title}</h4>
+              <h3>{this.props.client}</h3>
+            </Middle>
+          </Content>
+        </LinkTo>
       </Wrap>
     );
   }
 }
 
-export default withRouter(connect(null, { playVideo })(Box));
+export default connect(null, { playVideo })(Box);

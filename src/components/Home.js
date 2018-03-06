@@ -2,19 +2,9 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
-import VideoPlayer from './VideoPlayer';
 import VideoHome from './VideoHome';
 import Box from './Box';
 // import { data } from '../data';
-import { stopVideo } from '../redux/actions';
-
-const Main = styled.div`
-  min-height: calc(100vh - 130px);
-  z-index: 100;
-  display: block;
-  width: 100%;
-  ${props => props.showVideo && `top: -${window.scrollY}px;`};
-`;
 
 // const Row = styled.div`
 //   display: flex;
@@ -36,11 +26,6 @@ const Grid = styled.div`
 `;
 
 class Home extends Component {
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.showVideo && !this.props.showVideo)
-      window.scrollTo(0, prevProps.scrollY);
-  }
-
   renderBoxes = () => {
     // const {
     //   avatar_picture: { url },
@@ -49,10 +34,7 @@ class Home extends Component {
     // } = this.props.data[0].acf;
     // return <Box image={url} title={nombre_del_proyecto} client={cliente} />;
 
-    let large = false;
     return this.props.data.map((item, key) => {
-      if (key % 2) large = !large;
-
       // Si no existe acf implementado
       if (!item.acf.avatar_picture) return null;
       const {
@@ -64,7 +46,6 @@ class Home extends Component {
         <Box
           key={item.id}
           image={url}
-          large={large}
           title={nombre_del_proyecto}
           client={cliente}
         />
@@ -75,16 +56,8 @@ class Home extends Component {
   render() {
     return (
       <div>
-        <Main showVideo={this.props.showVideo}>
-          <VideoHome />
-
-          <Grid>{this.renderBoxes()}</Grid>
-        </Main>
-
-        <VideoPlayer
-          showVideo={this.props.showVideo}
-          closeVideo={this.props.stopVideo}
-        />
+        <VideoHome />
+        <Grid>{this.renderBoxes()}</Grid>
       </div>
     );
   }
@@ -93,9 +66,8 @@ class Home extends Component {
 const mapStateToProps = state => {
   return {
     showVideo: state.video.showVideo,
-    scrollY: state.video.scrollY,
     data: state.data.data
   };
 };
 
-export default connect(mapStateToProps, { stopVideo })(Home);
+export default connect(mapStateToProps)(Home);
