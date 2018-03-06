@@ -13,6 +13,9 @@ export default (state = initialState, action) => {
     case FETCH_DATA_SUCCESS: {
       return { ...state, loading: false, data: action.payload };
     }
+    case FETCH_DATA_FAILED: {
+      return { ...state, loading: false, error: action.error };
+    }
     default:
       return state;
   }

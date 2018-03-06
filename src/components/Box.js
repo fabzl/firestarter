@@ -6,16 +6,20 @@ import { withRouter } from 'react-router';
 
 const Wrap = styled.div`
   position: relative;
-  width: ${props => (props.large ? 200 / 3 : 100 / 3)}%; 
+  /* width: ${props => (props.large ? 200 / 3 : 100 / 3)}%;  */
   /* flex: ${props => (props.large ? 2 : 1)}; */
   overflow: hidden;
+  background: url(${props => props.src}) no-repeat center;
+  background-size: cover;
 `;
 
-const Img = styled.img`
-  width: 100%;
-  height: auto;
-  display: block;
-`;
+// const Img = styled.img`
+//   max-width: 100%;
+//   max-height: 100%;
+//   /* width: 100%;
+//   height: auto;
+//   display: block; */
+// `;
 
 const Content = styled.div`
   position: absolute;
@@ -125,16 +129,16 @@ class Box extends Component {
   render() {
     return (
       <Wrap
+        src={this.props.image}
         large={this.props.large}
         onMouseEnter={() => this.hoverTrue()}
         onMouseLeave={() => this.hoverFalse()}
         onClick={!this.props.link ? this.props.playVideo : this.redirect}
       >
-        <Img src={this.props.image} />
         <Content hover={this.state.hover} large={this.props.large}>
           <Middle>
-            <H4 hover={this.state.hover}>Test 2</H4>
-            <H3 hover={this.state.hover}>Test 1</H3>
+            <H4 hover={this.state.hover}>{this.props.title}</H4>
+            <H3 hover={this.state.hover}>{this.props.client}</H3>
           </Middle>
         </Content>
       </Wrap>

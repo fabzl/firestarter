@@ -39,6 +39,7 @@ class App extends Component {
 
   render() {
     if (this.props.data.data.length === 0) return <Loader />;
+
     return (
       <Router>
         <Overlay showVideo={this.props.showVideo}>
