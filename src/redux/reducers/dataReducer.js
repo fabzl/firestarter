@@ -2,7 +2,8 @@ import { FETCH_DATA, FETCH_DATA_SUCCESS, FETCH_DATA_FAILED } from '../types';
 
 const initialState = {
   loading: false,
-  data: [],
+  pages: [],
+  posts: [],
   error: ''
 };
 
@@ -11,7 +12,12 @@ export default (state = initialState, action) => {
     case FETCH_DATA:
       return { ...state, loading: true };
     case FETCH_DATA_SUCCESS: {
-      return { ...state, loading: false, data: action.payload };
+      return {
+        ...state,
+        loading: false,
+        pages: action.payload.pages,
+        posts: action.payload.posts
+      };
     }
     case FETCH_DATA_FAILED: {
       return { ...state, loading: false, error: action.error };

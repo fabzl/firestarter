@@ -13,10 +13,22 @@ const options = [reducers, {}];
 
 const middleware = [applyMiddleware(thunk)];
 
-if (process.env.NODE_ENV === 'development') {
-  middleware.push(
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-  );
+// Si el browser es Chrome y no es movil
+var ua = navigator.userAgent;
+if (
+  !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(
+    ua
+  )
+) {
+  if (
+    navigator.userAgent.indexOf('Chrome') &&
+    process.env.NODE_ENV === 'development'
+  ) {
+    middleware.push(
+      window.__REDUX_DEVTOOLS_EXTENSION__ &&
+        window.__REDUX_DEVTOOLS_EXTENSION__()
+    );
+  }
 }
 
 options.push(compose(...middleware));

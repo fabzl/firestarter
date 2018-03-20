@@ -3,40 +3,30 @@ import styled from 'styled-components';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import Home from './components/Home';
-import Work from './components/Work';
+// Sections
+import Home from './pages/Home';
+import Work from './pages/Work';
+import ShowWork from './pages/ShowWork';
+import About from './pages/About';
+import Contact from './pages/Contact';
+
+// Components
 import Header from './components/Header';
-import ShowWork from './components/ShowWork';
 import Loader from './components/Loader';
 import VideoPlayer from './components/VideoPlayer';
+import Modal from './components/Modal';
+import Fade from './components/Fade';
+import Footer from './components/Footer';
 
-import { fetchData, stopVideo } from './redux/actions';
+import { fetchData } from './redux/actions';
 
-const Overlay = styled.div`
-  width: 100%;
-  &::before {
-    opacity: ${props => (props.showVideo ? 0.92 : 0)};
-    content: '';
-    display: block;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    position: fixed;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    z-index: 999;
-    background: #000;
-    top: 0;
-  }
-  ${props => props.showVideo && 'position: fixed;'};
-`;
-
-const Main = styled.div`
-  min-height: calc(100vh - 130px);
-  z-index: 100;
-  display: block;
-  width: 100%;
-  ${props => props.showVideo && `top: -${window.scrollY}px;`};
+const Wrap = styled.div`
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  height: 100%;
+  background: #040029;
+  /* overflow: ${props => (props.showVideo ? 'hidden' : 'visible')}; */
 `;
 
 class App extends Component {
@@ -45,31 +35,37 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.showVideo && !this.props.showVideo)
-      window.scrollTo(0, prevProps.scrollY);
+    // if (prevProps.showVideo && !this.props.showVideo)
+    // window.scrollTo(0, prevProps.scrollY);
   }
 
   render() {
-    if (this.props.data.data.length === 0) return <Loader />;
+    if (this.props.posts.length === 0) return <Loader />;
 
     return (
-      <Router>
-        <Overlay showVideo={this.props.showVideo}>
-          <Header />
+      <Wrap {...this.props}>
+        <Fade in={this.props.showVideo}>
+          <Modal />
+        </Fade>
 
-          <Main showVideo={this.props.showVideo}>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/work" component={Work} />
+        <Router>
+          <div style={{ display: 'flex', flex: 1 }}>
+            <Header />
 
-            <Route exact path="/work/:link" component={ShowWork} />
-          </Main>
+            <div style={{ flex: 1 }}>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/work" component={Work} />
 
-          <VideoPlayer
-            showVideo={this.props.showVideo}
-            closeVideo={this.props.stopVideo}
-          />
-        </Overlay>
-      </Router>
+              <Route exact path="/work/:link" component={ShowWork} />
+              <Route exact path="/about" component={About} />
+              <Route exact path="/contact" component={Contact} />
+            </div>
+
+            {/* <VideoPlayer /> */}
+          </div>
+        </Router>
+        <Footer />
+      </Wrap>
     );
   }
 }
@@ -78,8 +74,10 @@ const mapStateToProps = state => {
   return {
     showVideo: state.video.showVideo,
     scrollY: state.video.scrollY,
-    data: state.data
+    pages: state.data.pages,
+    posts: state.data.posts,
+    loading: state.data.loading
   };
 };
 
-export default connect(mapStateToProps, { fetchData, stopVideo })(App);
+export default connect(mapStateToProps, { fetchData })(App);

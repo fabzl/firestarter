@@ -88,14 +88,17 @@ class Box extends Component {
   handleLink = e => {
     if (!this.props.link) {
       e.preventDefault();
-      this.props.playVideo();
+      this.props.playVideo(this.props.videoUrl);
     }
   };
 
   render() {
     return (
       <Wrap src={this.props.image}>
-        <LinkTo to={'/work/' + this.props.link} onClick={this.handleLink}>
+        <LinkTo
+          to={this.props.link ? `/work/${this.props.link}` : '/'}
+          onClick={this.handleLink}
+        >
           <Content>
             <Middle>
               <h4>{this.props.title}</h4>

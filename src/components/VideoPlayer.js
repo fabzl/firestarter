@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import Player from '@vimeo/player';
+// import Player from '@vimeo/player';
+import ReactPlayer from 'react-player';
+import { connect } from 'react-redux';
+import { stopVideo } from '../redux/actions';
 
 const Modal = styled.div`
   display: ${props => (props.showVideo ? 'block' : 'none')};
@@ -37,7 +40,7 @@ const Responsive = styled.div`
   padding-bottom: ${props => (props.showVideo ? 56.25 : 50)}%;
 `;
 
-const Iframe = styled.iframe`
+const Player = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -73,7 +76,8 @@ const Close = styled.a`
 
 class VideoPlayer extends Component {
   state = {
-    showHolder: false
+    showHolder: false,
+    playing: false
   };
 
   componentDidUpdate = async (prevProps, prevState) => {
@@ -84,22 +88,22 @@ class VideoPlayer extends Component {
 
     if (!prevProps.showVideo && this.props.showVideo) {
       await delay(() => this.setState({ showHolder: true }), 300);
-      await delay(() => this.player.play(), 1000);
+      await delay(() => this.setState({ playing: true }), 1000);
     }
   };
 
   componentDidMount() {
-    this.player = new Player(this.iframe);
+    // this.player = new Player(this.iframe);
   }
 
   closeVideo = async () => {
-    await this.player.pause();
-    this.setState({ showHolder: false });
-    this.props.closeVideo();
+    // await this.player.pause();
+    this.setState({ showHolder: false, playing: false });
+    this.props.stopVideo();
   };
 
   render() {
-    // src="https://player.vimeo.com/video/230218440?autoplay=1&amp;color=ffffff&amp;title=0&amp;byline=0&amp;portrait=0&amp;hd=1"
+    // https://player.vimeo.com/video/256368414
     return (
       <Modal showVideo={this.props.showVideo} onClick={this.closeVideo}>
         <Close showVideo={this.props.showVideo} />
@@ -109,10 +113,15 @@ class VideoPlayer extends Component {
             showVideo={this.state.showVideo}
             onClick={this.closeVideo}
           >
-            <Iframe
-              innerRef={iframe => (this.iframe = iframe)}
-              src="https://player.vimeo.com/video/230218440"
+            <ReactPlayer
+              url={this.props.url}
+              playing={this.state.playing}
+              wrapper={Player}
             />
+            {/* <Iframe
+              innerRef={iframe => (this.iframe = iframe)}
+              src={`https://player.vimeo.com/video/${this.props.id}`}
+            /> */}
           </Responsive>
         </Holder>
       </Modal>
@@ -120,7 +129,14 @@ class VideoPlayer extends Component {
   }
 }
 
-export default VideoPlayer;
+const mapStateToProps = state => {
+  return {
+    showVideo: state.video.showVideo,
+    url: state.video.url
+  };
+};
+
+export default connect(mapStateToProps, { stopVideo })(VideoPlayer);
 
 // {props.showVideo && (
 //   <Iframe

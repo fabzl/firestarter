@@ -6,124 +6,104 @@ import { Link } from 'react-router-dom';
 import { playVideo } from '../redux/actions';
 
 const Wrap = styled.div`
+  display: flex;
+  justify-content: space-between;
   height: 100vh;
-  overflow: hidden;
-  width: 100%;
-  min-height: 100%;
-  display: block;
-`;
-
-const Img = styled.img`
-  z-index: 0;
-  opacity: 1;
-  transition: opacity 0.3s;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%;
-  transform: translate(-50%, -50%);
-  width: auto;
-  height: auto;
-`;
-
-const TextCenter = styled.div`
-  margin: -40px auto 0;
-  top: 45vh;
-  max-width: 720px;
-  padding: 20px;
-  z-index: 10;
-  transform: translate(0, -50%);
-  text-align: center;
+  align-items: center;
+  background: url(${props => props.src}) no-repeat center;
+  background-size: cover;
   color: #fff;
+  font-size: 16px;
+  & a:first-child:hover {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.3),
+      rgba(0, 0, 0, 0.1),
+      rgba(0, 0, 0, 0)
+    );
+    & svg {
+      margin-left: 15px;
+    }
+  }
+
+  & a:last-child:hover {
+    background: linear-gradient(
+      270deg,
+      rgba(0, 0, 0, 0.3),
+      rgba(0, 0, 0, 0.1),
+      rgba(0, 0, 0, 0)
+    );
+    & svg {
+      margin-right: 15px;
+    }
+  }
 `;
 
 const H1 = styled.h1`
-  margin-bottom: 0;
+  /* margin-bottom: 0; */
   font-size: 62px;
   line-height: 1em;
   text-transform: uppercase;
   font-weight: 700;
   font-style: italic;
-  margin: 0 auto 0.6em;
+  /* margin: 0 auto 0.6em; */
   text-align: center;
 `;
 
-const Play = styled.span`
+const Arrow = styled(Link)`
+  color: #fff;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  width: 10%;
+  justify-content: center;
+  background: transparent;
+  & svg {
+    transition: all 0.3s;
+  }
+`;
+
+const Left = styled.span`
+  &:hover {
+    padding-left: 15px;
+  }
+`;
+
+const Right = styled.span`
+  &:hover {
+    padding-right: 15px;
+  }
+`;
+
+const Center = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+`;
+
+const Play = styled.div`
   &:hover {
     opacity: 0.8;
   }
 `;
 
-const BaseArrow = styled(Link)`
-  display: block;
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 10%;
-  color: transparent;
-  text-decoration: none;
-  font-size: 62px;
-  z-index: 20;
-`;
-
-const Left = BaseArrow.extend`
-  left: 0;
-  text-align: left;
-  span {
-    left: 5px;
-  }
-  &:hover span {
-    left: 10px;
-  }
-`;
-
-const Right = BaseArrow.extend`
-  right: 0;
-  text-align: right;
-  span {
-    right: 5px;
-  }
-  &:hover span {
-    right: 10px;
-  }
-`;
-
-const Arrow = styled.span`
-  transition: all 0.3s 0.2s;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: block;
-  top: 45%;
-  margin-top: -30px;
-  vertical-align: top;
-  color: #fff;
-  z-index: 5;
-`;
-
 const MainImage = props => (
-  <Wrap>
-    <TextCenter>
+  <Wrap src={props.url}>
+    <Arrow to={props.prevLink}>
+      <i className="fas fa-chevron-left fa-4x" />
+    </Arrow>
+
+    <Center>
       <H1>{props.nombre_del_proyecto}</H1>
-      <Play onClick={props.playVideo}>
+      <Play onClick={() => props.playVideo(props.videoUrl)}>
         <i className="far fa-play-circle fa-10x" />
       </Play>
-    </TextCenter>
-    <Img src={props.url} alt="full-image" />
+    </Center>
 
-    <Left to={`/work/${props.prevLink}`}>
-      <Arrow>
-        <i className="fas fa-chevron-left" />
-      </Arrow>
-    </Left>
-
-    <Right to={`/work/${props.nextLink}`}>
-      <Arrow>
-        <i className="fas fa-chevron-right" />
-      </Arrow>
-    </Right>
+    <Arrow to={props.nextLink}>
+      <i className="fas fa-chevron-right fa-4x" />
+    </Arrow>
   </Wrap>
 );
 

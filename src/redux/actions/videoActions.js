@@ -1,8 +1,10 @@
 import { PLAY_VIDEO, STOP_VIDEO } from '../types';
 
-export const playVideo = () => {
+export const playVideo = url => {
+  // const id = url.match(/\d/gi).join('');
   return {
-    type: PLAY_VIDEO
+    type: PLAY_VIDEO,
+    url
   };
 };
 

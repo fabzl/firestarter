@@ -1,32 +1,43 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const Section = styled.section`
-  height: 100vh;
-  z-index: 0;
-  padding: 80px 40px 40px;
-  overflow: hidden;
+  height: ${props => (props.contact ? 80 : 100)}vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const VideoContainer = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
   width: 100%;
-  min-height: 100%;
-  display: block;
+  height: 100%;
+  overflow: hidden;
 `;
 
 const Video = styled.video`
+  /* Make video to at least 100% wide and tall */
+  min-width: 100%;
+  min-height: 100%;
+
+  /* Setting width & height to auto prevents the browser from stretching or squishing the video */
+  width: auto;
+  height: auto;
+
+  /* Center the video */
   position: absolute;
   top: 50%;
   left: 50%;
-  min-height: 100%;
-  width: 100%;
-  min-width: 178vh;
-  transform: translate(-50%, -50%) translateZ(0);
-  z-index: 0;
+  transform: translate(-50%, -50%);
 `;
 
 const Text = styled.div`
   z-index: 20;
   padding: 40px 80px;
-  transform: translate(0, -50%);
-  top: 50%;
+  /* top: 50%; */
   pointer-events: none;
   /* opacity: 0; */
   transition: opacity 1.3s;
@@ -74,15 +85,21 @@ const H2 = styled.h2`
   }
 `;
 
-export default () => (
-  <Fragment>
-    <Section>
+export default props => {
+  let video = 'video/videoIntroXX.mp4';
+  let videoLink = video.replace('XX', props.contact ? '02' : '03');
+
+  return (
+    <Section {...props}>
+      <VideoContainer>
+        <Video autoPlay muted loop>
+          <source src={videoLink} type="video/mp4" />
+        </Video>
+      </VideoContainer>
+
       <Text>
-        <H2>Where imagination meets reality</H2>
+        <H2>{props.title}</H2>
       </Text>
-      <Video autoPlay muted loop>
-        <source src="video/videoIntro03.mp4" type="video/mp4" />
-      </Video>
     </Section>
-  </Fragment>
-);
+  );
+};
